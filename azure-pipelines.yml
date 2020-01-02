@@ -7,14 +7,14 @@ trigger:
 - master
 
 stages:
-- stage: Install_Bazel
-  displayName: Download and install Bazel
+- stage: Bazel_Build
+  displayName: Build
   jobs:
-  - job: InstallBazel
+  - job: Build
     pool:
       vmImage: 'ubuntu-latest'
 
-    steps:
+    steps: 
     - script: |
         echo "deb [arch=amd64] http://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list
         curl https://bazel.build/bazel-release.pub.gpg | sudo apt-key add -
@@ -25,14 +25,6 @@ stages:
         bazel version
       displayName: 'show bazel version'
 
-- stage: Bazel_Build
-  displayName: Bazel Build
-  jobs:
-  - job: BazelRun
-    pool:
-      vmImage: 'ubuntu-latest'
-
-    steps: 
     - script: |
         cd bazel-hello
         bazel clean 
@@ -44,13 +36,23 @@ stages:
       displayName: 'run all build'  
 
 - stage: Bazel_Tests
-  displayName: Bazel Tests
+  displayName: Test
   jobs:
-  - job: BazelTests
+  - job: Test
     pool:
       vmImage: 'ubuntu-latest'
 
     steps:  
+    - script: |
+        echo "deb [arch=amd64] http://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list
+        curl https://bazel.build/bazel-release.pub.gpg | sudo apt-key add -
+        sudo apt-get update && sudo apt-get install -y bazel
+      displayName: 'install bazel'
+
+    - script: |
+        bazel version
+      displayName: 'show bazel version'
+
     - script: |
         cd bazel-hello
         bazel test ... 
