@@ -7,3 +7,5 @@ see bazel-hello.
 
 For using Abseil with the [CMake](https://cmake.org/) meta-buildsystem,
 see cmake-hello.
+
+## added to README
